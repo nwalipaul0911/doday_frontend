@@ -7,13 +7,7 @@ const Tasks = () => {
   const token = useSelector((state) => state.auth.value);
   const tasks = useSelector((state) => state.tasks.value);
   const theme = useSelector((state) => state.theme.value);
-  const [taskNav, setTaskNav] = useState([
-    { name: "Today", active: true },
-    { name: "Upcoming", active: false },
-    { name: "Done", active: false },
-    { name: "Missed", active: false },
-    { name: "All", active: false },
-  ]);
+
   const text_color = theme == "dark" ? "text-light" : "text-dark";
   const dispatch = useDispatch();
 
@@ -54,6 +48,13 @@ const Tasks = () => {
     () => [todayTask, upcomingTask, doneTask, missedTask, tasks],
     [tasks]
   );
+  const [taskNav, setTaskNav] = useState([
+    { name: "Today", active: true },
+    { name: "Upcoming", active: false },
+    { name: "Done", active: false },
+    { name: "Missed", active: false },
+    { name: "All", active: false },
+  ]);
   const [activeTaskIndex, setActiveTaskIndex] = useState(0);
 
   // function to set the active task navigation in the UI
@@ -132,75 +133,89 @@ const Tasks = () => {
         </div>
       </div>
       <div className="py-4 items-container">
-        {taskList[activeTaskIndex]?.map((task, index) => (
-          <div
-            key={index}
-            className={`${text_color} items py-2 d-flex justify-content-between`}
-          >
-            <div className="col-8">
-              <div className="row g-0">
-                <div className="col-1">
-                  <div
-                    className="checkbox-container grid-item-center p-0"
-                    title="Mark as done"
-                    onClick={() => setTaskStatus(task.id)}
-                  >
-                    <i className="fa-solid fa-check text-success"></i>
+        {taskList[activeTaskIndex].length>0? (
+          <>
+            {taskList[activeTaskIndex]?.map((task, index) =>(
+              <div
+                key={index}
+                className={`${text_color} items py-2 d-flex justify-content-between`}
+              >
+                <div className="col-8">
+                  <div className="row g-0">
+                    <div className="col-1">
+                      <div
+                        className="checkbox-container grid-item-center p-0"
+                        title="Mark as done"
+                        onClick={() => setTaskStatus(task.id)}
+                      >
+                        <i className="fa-solid fa-check text-success"></i>
+                      </div>
+                    </div>
+                    <div className="col-10">
+                      <div>
+                        <Link className={`${text_color} item `}>
+                          {task.title.slice(0, 10)}
+                          <span className="text-secondary">...</span>
+                        </Link>
+                      </div>
+                      <div>
+                        <i className="text-secondary ">
+                          {task.detail.slice(0, 25)}
+                          <span className="text-secondary">...</span>
+                        </i>
+                      </div>
+                      <div>
+                        <small className="text-secondary">
+                          <i className={`fa-solid fa-calendar-days me-1`}></i>
+                          {task.todo_date}
+                        </small>
+                        <small className="text-secondary ms-3">
+                          <i className={`fa-solid fa-clock  me-1`}></i>
+                          {task.todo_time}
+                        </small>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="col-10">
-                  <div>
-                    <Link className={`${text_color} item `}>
-                      {task.title.slice(0, 10)}
-                      <span className="text-secondary">...</span>
-                    </Link>
-                  </div>
-                  <div>
-                    <i className="text-secondary ">
-                      {task.detail.slice(0, 25)}
-                      <span className="text-secondary">...</span>
-                    </i>
-                  </div>
-                  <div>
-                    <small className="text-secondary">
-                      <i className={`fa-solid fa-calendar-days me-1`}></i>
-                      {task.todo_date}
-                    </small>
-                    <small className="text-secondary ms-3">
-                      <i className={`fa-solid fa-clock  me-1`}></i>
-                      {task.todo_time}
-                    </small>
-                  </div>
+
+                <div className="item-icons-container">
+                  <Link
+                    to={`${task.id}`}
+                    className="fa-solid fa-pen-to-square item-icons grid-item-center"
+                    title="Edit task"
+                  ></Link>
+
+                  <Link
+                    to={`${task.id}/share`}
+                    className="fa-solid fa-share item-icons grid-item-center"
+                    title="Share task"
+                  ></Link>
+
+                  <Link
+                    to={`${task.id}/add_to`}
+                    className="fa-solid fa-folder-plus item-icons grid-item-center"
+                    title="Add To Project"
+                  ></Link>
+                  <Link
+                    to={`${task.id}/delete`}
+                    className="fa-solid fa-trash item-icons grid-item-center"
+                    title="Delete task"
+                  ></Link>
                 </div>
               </div>
+            )
+        )}
+          </>) : (
+          <>
+            <div className="grid-item-center" style={{height:'inherit'}}>
+            <div className="text-center">
+                <p className={`${text_color}`}>No tasks here</p>
+                <i className="text-success">
+                  Click new task button to create task
+                </i>
+              </div>
             </div>
-
-            <div className="item-icons-container">
-              <Link
-                to={`${task.id}`}
-                className="fa-solid fa-pen-to-square item-icons grid-item-center"
-                title="Edit task"
-              ></Link>
-
-              <Link
-                to={`${task.id}/share`}
-                className="fa-solid fa-share item-icons grid-item-center"
-                title="Share task"
-              ></Link>
-
-              <Link
-                to={`${task.id}/add_to`}
-                className="fa-solid fa-folder-plus item-icons grid-item-center"
-                title="Add To Project"
-              ></Link>
-              <Link
-                to={`${task.id}/delete`}
-                className="fa-solid fa-trash item-icons grid-item-center"
-                title="Delete task"
-              ></Link>
-            </div>
-          </div>
-        ))}
+          </>)}
       </div>
     </>
   );

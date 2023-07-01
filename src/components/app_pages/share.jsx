@@ -11,9 +11,9 @@ const Share = () => {
   const text_color = theme == "dark" ? "text-light" : "text-dark";
   const form_input_style = theme == "dark" ? "form-input-dark" : "";
   const dispatch = useDispatch()
-  const taskId_ = useParams()
-  const taskId = taskId_.id
-  const projectId = taskId_.project_id
+  const ids_ = useParams()
+  const taskId = ids_.task
+  const projectId = ids_.id
   const path = location.charAt(5)=='t'?'/app/tasks':`/app/projects/${projectId}`;
 
 

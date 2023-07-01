@@ -10,7 +10,7 @@ const AddCollaborator = () => {
   const text_color = theme == "dark" ? "text-light" : "text-dark";
   const form_input_style = theme == "dark" ? "form-input-dark" : "";
   const dispatch = useDispatch()
-  const projectId = useParams().project_id
+  const projectId = useParams().id
    const path = `/app/projects/${projectId}`
 
   const saveProject = async () => {

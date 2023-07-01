@@ -48,7 +48,7 @@ const Notes = () => {
 
             <div className="item-icons-container">
               <Link
-                
+                to={`${note.id}`}
                 className="fa-solid fa-pen-to-square item-icons grid-item-center"
                 title="Edit task"
               ></Link>

@@ -156,7 +156,7 @@ const Route = () => {
               element : <CreateTask />
             },
             {
-              path: ':id/share',
+              path: ':task/share',
               element: <Share />
             },
             {
@@ -164,7 +164,7 @@ const Route = () => {
               element: <AddProject />
             },
             {
-              path: ':id/delete',
+              path: ':task/delete',
               element: <DeleteTask />
             }
           ]
@@ -205,35 +205,41 @@ const Route = () => {
             },
             {
               path : ':id',
-              element : <Project />
+              element : <Project />,
+              children : [
+                {
+                  path : ':task',
+                  element : <Task />,
+                  loader : async({params})=>{
+                    const response = await fetch(`http://127.0.0.1:9000/todo/${params.task}`, {
+                      headers : {
+                        'content-type': 'application/json',
+                      Authorization: `Bearer ${token.access}`}
+                    })
+                    const data = response.json() 
+                    return data
+                  }
+                },
+                {
+                  path: ':task/share',
+                  element: <Share />
+                },
+                {
+                  path: ':task/delete',
+                  element: <DeleteTask />
+                },
+                {
+                  path: 'add_collaborator',
+                  element: <AddCollaborator />
+                },
+                {
+                  path: 'task/create',
+                  element : <CreateTask />
+                }
+              ]
               
             },
-            {
-              path : ':id/:task',
-              element : <Task />,
-              loader : async({params})=>{
-                const response = await fetch(`http://127.0.0.1:9000/todo/${params.task}`, {
-                  headers : {
-                    'content-type': 'application/json',
-                  Authorization: `Bearer ${token.access}`}
-                })
-                const data = response.json() 
-                return data
-              }
-            },
-            {
-              path: ':project_id/:id/share',
-              element: <Share />
-            },
-            {
-              path: ':project_id/:id/delete',
-              element: <DeleteTask />
-            }
-            ,
-            {
-              path: ':project_id/add_collaborator',
-              element: <AddCollaborator />
-            }
+
           ]
         }
         

@@ -19,7 +19,8 @@ const CreateProject = () => {
       },
       body: JSON.stringify(project),
     });
-    if (request.status == 200) {
+
+    if (response.status == 201) {
       getProjects();
       setModalState();
     }

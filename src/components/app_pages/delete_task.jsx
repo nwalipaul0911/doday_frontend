@@ -10,8 +10,8 @@ const DeleteTask = () => {
   const text_color = theme == "dark" ? "text-light" : "text-dark";
   const dispatch = useDispatch()
   const taskId_ = useParams()
-  const taskId = taskId_.id
-  const projectId = taskId_.project_id
+  const taskId = taskId_.task
+  const projectId = taskId_.id
   const path = location.charAt(5)=='t'?'/app/tasks':`/app/projects/${projectId}`;
   console.log(path)
 

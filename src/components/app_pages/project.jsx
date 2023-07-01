@@ -2,6 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setTask } from "../../slices/tasks";
+import { Outlet } from "react-router-dom";
 
 const Project = () => {
   const projectId = useParams("id");
@@ -12,13 +13,7 @@ const Project = () => {
   const [tasks, setTasks] = useState([]);
   const dispatch = useDispatch();
   const [collaborators, setCollaborators] = useState([]);
-  const [taskNav, setTaskNav] = useState([
-    { name: "Today", active: true },
-    { name: "Upcoming", active: false },
-    { name: "Done", active: false },
-    { name: "Missed", active: false },
-    { name: "All", active: false },
-  ]);
+
   const undoneTask = tasks.filter((task) => task.status == false);
   // list of task yet to be done for the current day
   const todayTask = tasks.filter((task) => {
@@ -56,6 +51,15 @@ const Project = () => {
     () => [todayTask, upcomingTask, doneTask, missedTask, tasks],
     [tasks]
   );
+
+  const [taskNav, setTaskNav] = useState([
+    { name: "Today", active: true },
+    { name: "Upcoming", active: false },
+    { name: "Done", active: false },
+    { name: "Missed", active: false },
+    { name: "All", active: false },
+  ]);
+
   const [activeTaskIndex, setActiveTaskIndex] = useState(0);
 
   // function to set the active task navigation in the UI
@@ -141,17 +145,27 @@ const Project = () => {
       });
       if (response.status == 200) {
         dispatch(setTask(await response.json()));
-        getTasks()
+        getTasks();
       }
     }
   };
   return (
     <>
+      <Outlet />
       <div className="d-flex justify-content-between m-3">
-        <div>
           <h4 className={`${text_color} pb-2 ms-3`}>{project.name}</h4>
-        </div>
-        <div>
+        
+        <div className="d-flex justify-content-between align-items-center">
+          <Link
+            to={`/app/projects`}
+            className="fa-solid fa-arrow-left item-icons grid-item-center me-3"
+            title="Back"
+          > </Link>
+          <Link
+            to={`task/create`}
+            className="fa-solid fa-plus item-icons grid-item-center me-3"
+            title="Add task"
+          > </Link>
           <Link
             to={`add_collaborator`}
             className="fa-solid fa-user-plus item-icons grid-item-center me-3"
@@ -188,76 +202,90 @@ const Project = () => {
         </div>
       </div>
       <div className="py-4 items-container">
-        {taskList[activeTaskIndex]?.map((task, index) => (
-          <div
-            key={index}
-            className={`${text_color} items py-2 d-flex justify-content-between`}
-          >
-            <div className="col-8">
-              <div className="row g-0">
-                <div className="col-1">
-                  <div
-                    className="checkbox-container grid-item-center p-0"
-                    title="Mark as done"
-                    onClick={() => setTaskStatus(task.id)}
-                  >
-                    <i className="fa-solid fa-check text-success"></i>
+        {taskList[activeTaskIndex].length > 0 ? (
+          <>
+            {taskList[activeTaskIndex]?.map((task, index) => (
+              <div
+                key={index}
+                className={`${text_color} items py-2 d-flex justify-content-between`}
+              >
+                <div className="col-8">
+                  <div className="row g-0">
+                    <div className="col-1">
+                      <div
+                        className="checkbox-container grid-item-center p-0"
+                        title="Mark as done"
+                        onClick={() => setTaskStatus(task.id)}
+                      >
+                        <i className="fa-solid fa-check text-success"></i>
+                      </div>
+                    </div>
+                    <div className="col-10">
+                      <div>
+                        <Link className={`${text_color} item `}>
+                          {task.title.slice(0, 10)}
+                          <span className="text-secondary">...</span>
+                        </Link>
+                      </div>
+                      <div>
+                        <i className="text-secondary ">
+                          {task.detail.slice(0, 25)}
+                          <span className="text-secondary">...</span>
+                        </i>
+                      </div>
+                      <div>
+                        <small className="text-secondary">
+                          <i className={`fa-solid fa-calendar-days me-1`}></i>
+                          {task.todo_date}
+                        </small>
+                        <small className="text-secondary ms-3">
+                          <i className={`fa-solid fa-clock  me-1`}></i>
+                          {task.todo_time}
+                        </small>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="col-10">
-                  <div>
-                    <Link className={`${text_color} item `}>
-                      {task.title.slice(0, 10)}
-                      <span className="text-secondary">...</span>
-                    </Link>
-                  </div>
-                  <div>
-                    <i className="text-secondary ">
-                      {task.detail.slice(0, 25)}
-                      <span className="text-secondary">...</span>
-                    </i>
-                  </div>
-                  <div>
-                    <small className="text-secondary">
-                      <i className={`fa-solid fa-calendar-days me-1`}></i>
-                      {task.todo_date}
-                    </small>
-                    <small className="text-secondary ms-3">
-                      <i className={`fa-solid fa-clock me-1`}></i>
-                      {task.todo_time}
-                    </small>
-                  </div>
+
+                <div className="item-icons-container">
+                  <Link
+                    to={`${task.id}`}
+                    className="fa-solid fa-pen-to-square item-icons grid-item-center"
+                    title="Edit task"
+                  ></Link>
+
+                  <Link
+                    to={`${task.id}/share`}
+                    className="fa-solid fa-share item-icons grid-item-center"
+                    title="Share task"
+                  ></Link>
+
+                  <Link
+                    to={`${task.id}/add_to`}
+                    className="fa-solid fa-folder-plus item-icons grid-item-center"
+                    title="Add To Project"
+                  ></Link>
+                  <Link
+                    to={`${task.id}/delete`}
+                    className="fa-solid fa-trash item-icons grid-item-center"
+                    title="Delete task"
+                  ></Link>
                 </div>
               </div>
+            ))}
+          </>
+        ) : (
+          <>
+            <div className="grid-item-center" style={{ height: "inherit" }}>
+              <div className="text-center">
+                <p className={`${text_color}`}>No tasks here</p>
+                <i className="text-success">
+                  Click add task to create new task
+                </i>
+              </div>
             </div>
-
-            <div className="item-icons-container">
-              <Link
-                to={`${task.id}`}
-                className="fa-solid fa-pen-to-square item-icons grid-item-center"
-                title="Edit task"
-              ></Link>
-
-              <Link
-                to={`${task.id}/share`}
-                className="fa-solid fa-share item-icons grid-item-center"
-                title="Assign Task"
-              ></Link>
-
-              <Link
-                className="fa-solid fa-folder-minus item-icons grid-item-center"
-                title="Remove task"
-                onClick={() => removeTask(task.id)}
-              ></Link>
-
-              <Link
-                to={`${task.id}/delete`}
-                className="fa-solid fa-trash item-icons grid-item-center"
-                title="Delete task"
-              ></Link>
-            </div>
-          </div>
-        ))}
+          </>
+        )}
       </div>
     </>
   );
